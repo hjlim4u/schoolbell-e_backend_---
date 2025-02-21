@@ -31,6 +31,7 @@ CREATE TABLE approval_lines (
 );
 
 -- 특정 사용자가 처리해야 할 결재 건을 조회하는 쿼리
+SET @current_user_id := 1; -- 현재 로그인한 사용자 ID
 SELECT 
     ad.document_id,
     ad.title,
@@ -41,7 +42,7 @@ SELECT
 FROM approval_documents ad
 JOIN approval_lines al ON ad.document_id = al.document_id
 JOIN users u ON ad.requester_id = u.user_id
-WHERE al.approver_id = :current_user_id  -- 현재 로그인한 사용자 ID
+WHERE al.approver_id = @current_user_id  -- 현재 로그인한 사용자 ID
 AND al.status = 'PENDING'  -- 아직 처리하지 않은 건
 AND NOT EXISTS (  -- 이전 단계가 모두 승인된 건만 조회
     SELECT 1 
